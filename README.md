@@ -1,6 +1,6 @@
 # Python-Ollama: Unleashing the Power of Ollama in Your Python Projects
 
-[![PyPI version](https://badge.fury.io/py/python-ollama.svg)](https://badge.fury.io/py/python-ollama)
+[![PyPI version](https://badge.fury.io/py/python-ollama.svg)]
 
 `python-ollama` is your comprehensive and intuitive Python client for the Ollama API. This package gives you the tools to harness the power of Ollama's large language models directly within your Python applications. With its user-friendly design, `python-ollama` simplifies model management, text generation, chat interactions, embedding creation, and other advanced Ollama functionalities.
 
