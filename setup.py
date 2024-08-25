@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="Python-Ollama",
-    version="0.1.0",
+    version="0.2.0",
     description="Python client for the Ollama API",
     author="Kaede Dev Kento Hinode",
     author_email="cleaverdeath@gmail.com",
