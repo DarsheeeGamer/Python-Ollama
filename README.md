@@ -1,15 +1,8 @@
 # Python-Ollama: Unleashing the Power of Ollama in Your Python Projects
+
 [![PyPI version](https://img.shields.io/pypi/v/python-ollama.svg)](https://pypi.org/project/python-ollama/)
 
-`python_ollama` is your comprehensive and intuitive Python client for the Ollama API. This package gives you the tools to harness the power of Ollama's large language models directly within your Python applications. With its user-friendly design, `python_ollama` simplifies model management, text generation, chat interactions, embedding creation, and other advanced Ollama functionalities.
-
-## Key Features
-
-- **Full API Coverage:** Interact seamlessly with every Ollama API endpoint, granting you granular control over your Ollama server and models.
-- **Pythonic Design:** Enjoy a clean, intuitive, and Pythonic API structure that mirrors the Ollama API, making it easy to learn and use.
-- **Simplified Requests:** Abstracted HTTP request handling and robust error management streamline your interaction with the Ollama server, ensuring a smooth and reliable experience.
-- **Comprehensive Documentation:** Each method and class is meticulously documented with clear explanations, parameter descriptions, return types, and illustrative examples to guide you through every aspect of the API.
-- **Extensible & Future-Proof:**  Built with flexibility in mind, `python_ollama` is designed to easily accommodate future Ollama API updates and extensions, ensuring compatibility and long-term value. 
+`python_ollama` is your comprehensive and intuitive Python client for the Ollama API. This package empowers you to harness the full potential of Ollama's large language models directly within your Python applications.  Whether you're building chatbots, generating creative content, or exploring advanced AI functionalities, `python_ollama` provides an easy-to-use interface for managing models, generating text, and interacting with the Ollama API.
 
 ## Installation
 
@@ -36,11 +29,11 @@ ollama = OllamaAPI(url="http://your-ollama-server:port")  # Your custom Ollama s
 
 ### 2. Master Model Management with `ollama.model`
 
-`python_ollama` provides a powerful nested class, `ollama.model`, to give you full control over managing Ollama models. 
+The `ollama.model` nested class provides a suite of tools for managing Ollama models, from creating new ones to deleting, downloading, and uploading them. 
 
-#### 2.1. Create New Models: `ollama.model.create()`
+#### 2.1. Creating New Models: `ollama.model.create()`
 
-The `create` method allows you to create new models on your Ollama server. You can either specify a path to a Modelfile on the server or provide the Modelfile content directly:
+The `create` method allows you to bring new models into your Ollama environment. You can either provide a path to a Modelfile on your server or directly input the Modelfile's content.
 
 ```python
 # Create a model from a Modelfile on the server
@@ -56,9 +49,10 @@ ollama.model.create(name="my-assistant", modelfile=modelfile_content)
 
 **Parameters:**
 
-- `name (str)`: **Required**. The desired name for your new model. Choose a descriptive name that reflects the model's purpose. 
-- `modelfile (str, optional)`: The contents of the Modelfile. If you are providing the file content, ensure it's a valid YAML-formatted Ollama Modelfile. 
+- `name (str)`: **Required**. The desired name for your new model. Choose a descriptive name that reflects the model's purpose (e.g., "my-code-generator", "summarizer", "chatbot").
+- `modelfile (str, optional)`: The contents of the Modelfile. If providing the file content, ensure it's a valid YAML-formatted Ollama Modelfile.
 - `path (str, optional)`: The file path to an existing Modelfile on your Ollama server. Make sure the path is correct and that the file is accessible to Ollama.
+- `stream (bool, optional)`: If `False`, the response will be returned as a single response object instead of a stream of objects. Defaults to `False`.
 - `**kwargs`: Additional parameters for model creation. Refer to the Ollama API documentation for a complete list and details. 
 
 **Example Use Cases:**
@@ -66,7 +60,7 @@ ollama.model.create(name="my-assistant", modelfile=modelfile_content)
 - Create specialized models tailored to specific tasks, such as code generation, question answering, or summarization, by customizing the Modelfile content. 
 - Experiment with different base models and parameters to fine-tune model performance for your applications.
 
-#### 2.2. Delete Existing Models: `ollama.model.delete()`
+#### 2.2. Deleting Existing Models: `ollama.model.delete()`
 
 Remove models that you no longer need from your Ollama server to free up space and keep your model library organized:
 
@@ -83,7 +77,7 @@ ollama.model.delete(name="my-old-model")
 - Delete outdated or unused models to maintain a clean and efficient model repository.
 - Remove experimental models after completing your evaluations.
 
-#### 2.3. Download (Pull) Models: `ollama.model.pull()`
+#### 2.3. Downloading (Pulling) Models: `ollama.model.pull()`
 
 Download models from the Ollama library or remote repositories to your Ollama server. The `pull` method handles the download process and allows you to process the downloaded model data in chunks:
 
@@ -97,14 +91,16 @@ for chunk in ollama.model.pull(name="llama2"):
 **Parameters:**
 
 - `name (str)`: **Required**. The name of the model to download (pull).
-- `**kwargs`: Additional parameters to customize the pull process, such as `insecure` (for local development/testing). Consult the Ollama documentation for a complete list. 
+- `insecure (bool, optional)`: Allow insecure connections to the library. Only use this if you are pulling from your own library during development. Defaults to `False`.
+- `stream (bool, optional)`: If `False`, the response will be returned as a single response object instead of a stream of objects. Defaults to `False`.
+- `**kwargs`: Additional parameters to customize the pull process. Consult the Ollama documentation for a complete list. 
 
 **Example Use Cases:**
 
 - Download pre-trained models from the Ollama library to experiment with or use in your applications.
 - Obtain updated versions of models to leverage the latest improvements and fixes.
 
-#### 2.4. Upload (Push) Models: `ollama.model.push()`
+#### 2.4. Uploading (Pushing) Models: `ollama.model.push()`
 
 Share your custom models with the Ollama community or upload them to a private model library:
 
@@ -116,14 +112,16 @@ for chunk in ollama.model.push(name="my-namespace/my-model:v1"):
 **Parameters:**
 
 - `name (str)`: **Required**. The name of the model to push. Include the namespace and tag if relevant (e.g., "my-namespace/my-model:v1"). 
-- `**kwargs`: Additional parameters for model pushing, such as `insecure` for local development. Refer to the Ollama documentation for details. 
+- `insecure (bool, optional)`: Allow insecure connections to the library. Only use this if you are pushing to your library during development. Defaults to `False`.
+- `stream (bool, optional)`: If `False`, the response will be returned as a single response object instead of a stream of objects. Defaults to `False`.
+- `**kwargs`: Additional parameters for model pushing. Refer to the Ollama documentation for details. 
 
 **Example Use Cases:**
 
 - Share your fine-tuned or custom-trained models with others.
 - Back up your models to a remote repository. 
 
-#### 2.5. Retrieve Model Information: `ollama.model.get()`
+#### 2.5. Retrieving Model Information: `ollama.model.get()`
 
 Get essential information about a model, such as its size, digest, and basic details:
 
@@ -141,7 +139,7 @@ print(info)
 - Check the details of a model before using it.
 - Verify the size of a model to ensure it fits within your system's resources. 
 
-#### 2.6. Show Detailed Model Information: `ollama.model.show()`
+#### 2.6. Showing Detailed Model Information: `ollama.model.show()`
 
 Retrieve comprehensive information about a model, including its Modelfile, template, parameters, license, system prompt, and other relevant details:
 
@@ -161,7 +159,7 @@ print(details)
 - Inspect the Modelfile and template of a model to understand its configuration.
 - Review the license information before using a model in your applications. 
 
-#### 2.7. Duplicate Existing Models: `ollama.model.copy()`
+#### 2.7. Duplicating Existing Models: `ollama.model.copy()`
 
 Create a copy of an existing model, allowing you to experiment with model modifications or create backups:
 
@@ -180,7 +178,7 @@ ollama.model.copy(source="llama2", destination="llama2-backup")
 - Experiment with modifications to a model's parameters or Modelfile without affecting the original model.
 - Create backups of important models to safeguard against accidental deletion or data loss.
 
-#### 2.8. List Running Models: `ollama.model.running()`
+#### 2.8. Listing Running Models: `ollama.model.running()`
 
 Get a list of all models currently loaded and running in memory on your Ollama server:
 
@@ -198,7 +196,7 @@ print(running_models)
 
 The `ollama.generate` nested class gives you the power to generate text and engage in multi-turn chat conversations using Ollama's language models. 
 
-#### 3.1. Generate Text: `ollama.generate()`, `ollama.generate.response()`, `ollama.generate.completion()`
+#### 3.1. Generating Text: `ollama.generate()`, `ollama.generate.response()`, `ollama.generate.completion()`
 
 Use these methods to generate text from a given prompt:
 
@@ -233,7 +231,7 @@ Refer to the Ollama API documentation for a comprehensive list of available para
 - Question answering: Get answers to factual or open-ended questions.
 - Summarization: Condense large amounts of text into concise summaries. 
 
-#### 3.2. Engage in Multi-Turn Conversations: `ollama.chat()`
+#### 3.2. Engaging in Multi-Turn Conversations: `ollama.chat()`
 
 Create dynamic and interactive chat experiences with Ollama's chat-capable models:
 
@@ -263,7 +261,7 @@ print(response)
 - Create interactive storytelling experiences. 
 - Develop AI-powered assistants to help users with tasks or provide information. 
 
-### 4. Generate Embeddings: `ollama.generate.embedding()`
+### 4. Generating Embeddings: `ollama.generate.embedding()`
 
 Create vector representations of text, useful for tasks like semantic similarity, clustering, and search:
 
@@ -287,7 +285,7 @@ print(embeddings)
 
 ### 5. Advanced Ollama API Features
 
-#### 5.1. List Available Models: `ollama.get_models()`
+#### 5.1. Listing Available Models: `ollama.get_models()`
 
 Retrieve a list of all models available on your Ollama server:
 
@@ -296,7 +294,7 @@ all_models = ollama.get_models()
 print(all_models) 
 ```
 
-#### 5.2. Check for Existing Blobs: `ollama.check_blob_exists()`
+#### 5.2. Checking for Existing Blobs: `ollama.check_blob_exists()`
 
 Verify if a particular file blob, often used for model or adapter files, is present on the server:
 
@@ -311,7 +309,7 @@ if blob_exists.status_code == 200:
 
 - `digest (str)`: **Required**. The SHA256 digest of the blob to check.
 
-#### 5.3. Upload Files as Blobs: `ollama.create_blob()`
+#### 5.3. Uploading Files as Blobs: `ollama.create_blob()`
 
 Upload a file to the Ollama server as a blob. This is useful for providing model files or adapter files when creating new models:
 
