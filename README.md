@@ -1,5 +1,4 @@
 # Python-Ollama: Unleashing the Power of Ollama in Your Python Projects
-https://ladybird-arriving-egret.ngrok-free.app
 [![PyPI version](https://img.shields.io/pypi/v/python-ollama.svg)](https://pypi.org/project/python-ollama/)
 
 `python_ollama` is your comprehensive and intuitive Python client for the Ollama API. This package gives you the tools to harness the power of Ollama's large language models directly within your Python applications. With its user-friendly design, `python_ollama` simplifies model management, text generation, chat interactions, embedding creation, and other advanced Ollama functionalities.
