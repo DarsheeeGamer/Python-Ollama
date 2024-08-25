@@ -2,7 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/python-ollama.svg)](https://pypi.org/project/python-ollama/)
 
-`python-ollama` is your comprehensive and intuitive Python client for the Ollama API. This package gives you the tools to harness the power of Ollama's large language models directly within your Python applications. With its user-friendly design, `python-ollama` simplifies model management, text generation, chat interactions, embedding creation, and other advanced Ollama functionalities.
+`python_ollama` is your comprehensive and intuitive Python client for the Ollama API. This package gives you the tools to harness the power of Ollama's large language models directly within your Python applications. With its user-friendly design, `python_ollama` simplifies model management, text generation, chat interactions, embedding creation, and other advanced Ollama functionalities.
 
 ## Key Features
 
@@ -10,14 +10,14 @@
 - **Pythonic Design:** Enjoy a clean, intuitive, and Pythonic API structure that mirrors the Ollama API, making it easy to learn and use.
 - **Simplified Requests:** Abstracted HTTP request handling and robust error management streamline your interaction with the Ollama server, ensuring a smooth and reliable experience.
 - **Comprehensive Documentation:** Each method and class is meticulously documented with clear explanations, parameter descriptions, return types, and illustrative examples to guide you through every aspect of the API.
-- **Extensible & Future-Proof:**  Built with flexibility in mind, `python-ollama` is designed to easily accommodate future Ollama API updates and extensions, ensuring compatibility and long-term value. 
+- **Extensible & Future-Proof:**  Built with flexibility in mind, `python_ollama` is designed to easily accommodate future Ollama API updates and extensions, ensuring compatibility and long-term value. 
 
 ## Installation
 
-Get started with `python-ollama` by installing it via pip:
+Get started with `python_ollama` by installing it via pip:
 
 ```bash
-pip install python-ollama
+pip install python_ollama
 ```
 
 ## Usage
@@ -32,12 +32,12 @@ from python_ollama import OllamaAPI
 # Initialize the API client, optionally specifying a custom base URL
 ollama = OllamaAPI()  # Defaults to http://localhost:11434
 # or
-ollama = OllamaAPI(base_url="http://your-ollama-server:port")  # Your custom Ollama server 
+ollama = OllamaAPI(url="http://your-ollama-server:port")  # Your custom Ollama server 
 ```
 
 ### 2. Master Model Management with `ollama.model`
 
-`python-ollama` provides a powerful nested class, `ollama.model`, to give you full control over managing Ollama models. 
+`python_ollama` provides a powerful nested class, `ollama.model`, to give you full control over managing Ollama models. 
 
 #### 2.1. Create New Models: `ollama.model.create()`
 
@@ -327,9 +327,9 @@ ollama.create_blob(digest="sha256:your_blob_digest", file_path="/path/to/your/mo
 
 ## Contributing
 
-We encourage contributions to make `python-ollama` even better! Here's how you can get involved:
+We encourage contributions to make `python_ollama` even better! Here's how you can get involved:
 
-* **Report Issues:** Found a bug, have a feature request, or want to suggest an improvement? Please open an issue on the [GitHub repository](https://github.com/DarsheeeGamer/Python-Ollama).
+* **Report Issues:** Found a bug, have a feature request, or want to suggest an improvement? Please open an issue on the [GitHub repository](https://github.com/DarsheeeGamer/Ollama-python).
 * **Submit Pull Requests:** Contribute bug fixes, new features, enhancements, or optimizations. Make sure your code adheres to the project's style guidelines and includes appropriate tests.
 
 ## License
