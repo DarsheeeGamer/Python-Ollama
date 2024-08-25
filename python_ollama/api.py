@@ -28,22 +28,9 @@ class OllamaAPI:
         """
         super().__init__()
         self.url = url
-        self.model = self.Model(self.url)
-        self.generate = self.Generate(self.url)
-
-    def _make_request(self, method, endpoint, json_data=None, stream=False):
-        """Helper function to make HTTP requests to the Ollama API."""
-        url = f"{self.url}{endpoint}"
-        headers = {"Content-Type": "application/json"}
-        response = requests.request(method, url, headers=headers, json=json_data, stream=stream)
-
-        if response.status_code != 200:
-            raise Exception(f"API request failed with status code {response.status_code}: {response.text}")
-
-        if stream:
-            return response.iter_content(chunk_size=1024)  # For large responses
-        else:
-            return response.json()
+        self.model = self.Model(self)  # Pass the OllamaAPI instance
+        self.generate = self.Generate(self)  # Pass the OllamaAPI instance
+        self.parameters = Parameters()
 
     # --- Model Management ---
     class Model:
@@ -51,8 +38,8 @@ class OllamaAPI:
         Provides methods for managing Ollama models.
         """
 
-        def __init__(self, url):
-            self.url = url
+        def __init__(self, api_instance):
+            self.api_instance = api_instance
 
         def create(self, name, modelfile=None, path=None, stream=False, **kwargs):
             """
@@ -68,8 +55,8 @@ class OllamaAPI:
             Returns:
                 dict: The API response as a JSON dictionary. 
             """
-            return self._make_request("POST", "/api/create", 
-                                      json_data={"name": name, "modelfile": modelfile, "path": path, "stream": stream, **kwargs})
+            data = {"name": name, "modelfile": modelfile, "path": path, "stream": stream, **kwargs}
+            return self.api_instance.post(endpoint="/api/create", json_data=data)
 
         def delete(self, name):
             """
@@ -81,7 +68,8 @@ class OllamaAPI:
             Returns:
                 dict: The API response as a JSON dictionary.
             """
-            return self._make_request("DELETE", "/api/delete", json_data={"name": name})
+            data = {"name": name}
+            return self.api_instance.delete(endpoint="/api/delete", json_data=data)
 
         def pull(self, name, insecure=False, stream=False, **kwargs):
             """
@@ -96,7 +84,8 @@ class OllamaAPI:
             Returns:
                 generator: A generator that yields chunks of the downloaded model data.
             """
-            return self._make_request("POST", f"/api/pull", json_data={"name": name, "insecure": insecure, "stream": stream, **kwargs}, stream=True)
+            data = {"name": name, "insecure": insecure, "stream": stream, **kwargs}
+            return self.api_instance.post(f"/api/pull", data, stream=True)
 
         def push(self, name, insecure=False, stream=False, **kwargs):
             """
@@ -111,7 +100,8 @@ class OllamaAPI:
             Returns:
                 generator: A generator that yields chunks of the response data.
             """
-            return self._make_request("POST", f"/api/push", json_data={"name": name, "insecure": insecure, "stream": stream, **kwargs}, stream=True)
+            data = {"name": name, "insecure": insecure, "stream": stream, **kwargs}
+            return self.api_instance.post(f"/api/push", data, stream=True)
 
         def get(self, name):
             """
@@ -123,7 +113,7 @@ class OllamaAPI:
             Returns:
                 dict: The API response as a JSON dictionary.
             """
-            return self._make_request("GET", f"/api/models/{name}")
+            return self.api_instance.get(f"/api/models/{name}")
 
         def show(self, name, verbose=False, **kwargs):
             """
@@ -138,7 +128,8 @@ class OllamaAPI:
             Returns:
                 dict: The API response as a JSON dictionary.
             """
-            return self._make_request("POST", "/api/show", json_data={"name": name, "verbose": verbose, **kwargs})
+            data = {"name": name, "verbose": verbose, **kwargs}
+            return self.api_instance.post("/api/show", data)
 
         def copy(self, source, destination):
             """
@@ -151,7 +142,8 @@ class OllamaAPI:
             Returns:
                 dict: The API response as a JSON dictionary.
             """
-            return self._make_request("POST", "/api/copy", json_data={"source": source, "destination": destination})
+            data = {"source": source, "destination": destination}
+            return self.api_instance.post("/api/copy", data)
 
         def running(self):
             """
@@ -160,7 +152,7 @@ class OllamaAPI:
             Returns:
                 dict: The API response as a JSON dictionary.
             """
-            return self._make_request("GET", "/api/ps")
+            return self.api_instance.get("/api/ps")
 
     # --- Text & Chat Completion ---
     class Generate:
@@ -168,10 +160,10 @@ class OllamaAPI:
         Provides methods for text and chat completion using Ollama models.
         """
 
-        def __init__(self, url):
-            self.url = url
+        def __init__(self, api_instance):
+            self.api_instance = api_instance
 
-        def generate(self, model, prompt, suffix=None, images=None, format="json", options=None, system=None, template=None, context=None, stream=True, raw=False, keep_alive="5m", **kwargs):
+        def response(self, model, prompt, suffix=None, images=None, format="text", options=None, system=None, template=None, context=None, stream=False, raw=False, keep_alive="5m", **kwargs):
             """
             Generates text from a prompt.
 
@@ -198,7 +190,7 @@ class OllamaAPI:
                 "prompt": prompt,
                 "suffix": suffix,
                 "images": images,
-                "format": format,
+                "format": "json",
                 "options": options,
                 "system": system,
                 "template": template,
@@ -208,7 +200,7 @@ class OllamaAPI:
                 "keep_alive": keep_alive,
                 **kwargs
             }
-            return self._make_request("POST", "/api/generate", json_data=data)
+            return self.api_instance.post("/api/generate", data)
 
         def embedding(self, model, input_data, truncate=True, options=None, keep_alive="5m", **kwargs):
             """
@@ -234,7 +226,7 @@ class OllamaAPI:
                 "keep_alive": keep_alive,
                 **kwargs
             }
-            return self._make_request("POST", "/api/embed", json_data=data)
+            return self.api_instance.post("/api/embed", data)
 
         def chat(self, model, messages, tools=None, format="json", options=None, stream=True, keep_alive="5m", **kwargs):
             """
@@ -268,7 +260,7 @@ class OllamaAPI:
                 "keep_alive": keep_alive,
                 **kwargs
             }
-            return self._make_request("POST", "/api/chat", json_data=data)
+            return self.api_instance.post("/api/chat", data)
 
     # --- Other Ollama API Methods ---
     def get_models(self):
@@ -278,7 +270,7 @@ class OllamaAPI:
         Returns:
             dict: The API response as a JSON dictionary.
         """
-        return self._make_request("GET", "/api/tags")
+        return self.get("/api/tags")
 
     def check_blob_exists(self, digest):
         """
@@ -323,20 +315,47 @@ class OllamaAPI:
         Returns:
             dict: The API response as a JSON dictionary.
         """
-        return self._make_request("GET", endpoint)
+        url = f"{self.url}{endpoint}"
+        headers = {"Content-Type": "application/json"}
+        response = requests.get(url, headers=headers)
 
-    def post(self, endpoint, json_data=None):
+        # Handle potential JSON errors gracefully
+        try:
+            return response.json()
+        except json.decoder.JSONDecodeError:
+            # If the response is not valid JSON, return the raw response text
+            return response.text
+
+    def post(self, endpoint, json_data=None, format="text"):
         """
         Makes a POST request to the Ollama API.
 
         Args:
             endpoint (str): The API endpoint to make the request to.
             json_data (dict, optional): Data to send in the request body.
+            format (str, optional): The format to return a response in (defaults to "text").
 
         Returns:
-            dict: The API response as a JSON dictionary.
+            str: The text response extracted from the JSON data.
         """
-        return self._make_request("POST", endpoint, json_data=json_data)
+        url = f"{self.url}{endpoint}"
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url, headers=headers, json=json_data)
+
+        # Handle potential JSON errors gracefully
+        try:
+            if format == "text":
+                response_data = response.json()
+                # Extract the response from the JSON data
+                return response_data.get('response', '') 
+            elif format == "json":
+                return response.text
+            else:
+                raise ValueError("Invalid format. Use 'text' or 'json'.")
+        except json.decoder.JSONDecodeError:
+            # If the response is not valid JSON, return the raw response text
+            return response.text
+
 
     def delete(self, endpoint, json_data=None):
         """
@@ -349,7 +368,16 @@ class OllamaAPI:
         Returns:
             dict: The API response as a JSON dictionary.
         """
-        return self._make_request("DELETE", endpoint, json_data=json_data)
+        url = f"{self.url}{endpoint}"
+        headers = {"Content-Type": "application/json"}
+        response = requests.delete(url, headers=headers, json=json_data)
+
+        # Handle potential JSON errors gracefully
+        try:
+            return response.json()
+        except json.decoder.JSONDecodeError:
+            # If the response is not valid JSON, return the raw response text
+            return response.text
 
     def head(self, endpoint):
         """
@@ -361,4 +389,4 @@ class OllamaAPI:
         Returns:
             requests.Response: The HEAD response from the Ollama server.
         """
-        return requests.head(f"{self.url}{endpoint}") 
+        return requests.head(f"{self.url}{endpoint}")
