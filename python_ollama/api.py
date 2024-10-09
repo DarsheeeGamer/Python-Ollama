@@ -326,21 +326,28 @@ class OllamaAPI:
             # If the response is not valid JSON, return the raw response text
             return response.text
 
-    def post(self, endpoint, json_data=None, format="text"):
+    def post(self, endpoint, json_data=None, data=None, stream=False, format="text"):
         """
         Makes a POST request to the Ollama API.
 
         Args:
             endpoint (str): The API endpoint to make the request to.
-            json_data (dict, optional): Data to send in the request body.
+            json_data (dict, optional): Data to send in the request body as JSON.
+            data (dict, optional): Data to send in the request body as form data.
+            stream (bool, optional): If true, the response will be returned as a stream of objects.
             format (str, optional): The format to return a response in (defaults to "text").
 
         Returns:
-            str: The text response extracted from the JSON data.
+            str or generator: The text response extracted from the JSON data or a generator for streaming responses.
         """
         url = f"{self.url}{endpoint}"
         headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, json=json_data)
+        if json_data:
+            response = requests.post(url, headers=headers, json=json_data)
+        elif data:
+            response = requests.post(url, headers=headers, data=data)
+        else:
+            raise ValueError("Either json_data or data must be provided.")
 
         # Handle potential JSON errors gracefully
         try:
@@ -349,7 +356,10 @@ class OllamaAPI:
                 # Extract the response from the JSON data
                 return response_data.get('response', '') 
             elif format == "json":
-                return response.text
+                if stream:
+                    return response.iter_content(chunk_size=None)
+                else:
+                    return response.text
             else:
                 raise ValueError("Invalid format. Use 'text' or 'json'.")
         except json.decoder.JSONDecodeError:
